@@ -1,0 +1,17 @@
+import type { ReactNode } from "react";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
+
+interface IProps {
+  children: ReactNode;
+}
+export default function ComponentLayout({ children }: IProps) {
+  return (
+    <div className="min-h-screen bg-yellow-300 flex flex-col">
+      <Navbar></Navbar>
+      <div className="container mx-auto grow-1"> {children}</div>
+     
+      <Footer></Footer>
+    </div>
+  );
+}
