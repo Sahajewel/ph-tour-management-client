@@ -7,7 +7,7 @@ interface IProps {
 }
 export default function ComponentLayout({ children }: IProps) {
   return (
-    <div className="min-h-screen bg-yellow-300 flex flex-col">
+    <div className="min-h-screen  flex flex-col">
       <Navbar></Navbar>
       <div className="container mx-auto grow-1"> {children}</div>
      
