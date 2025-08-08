@@ -20,17 +20,34 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router"
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
+import Password from "@/components/ui/Password"
 
-type RegisterInputs = {
-  username: string
-  email: string
-  password: string
-}
+
+ 
+const registerSchema = z.object({
+  username: z.string().min(2, {error: "User Name is too small"}).max(50),
+  email: z.email(),
+  password: z.string().min(6,{error: "Password is too small"}),
+  confirmPassword: z.string().min(6, {error:"Password does not match"}),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+})
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
-  const form = useForm<RegisterInputs>()
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    }
+  })
 
-  const onSubmit = (data: RegisterInputs) => {
+  const onSubmit = (data:z.infer<typeof registerSchema>) => {
     console.log("Submitted data:", data)
   }
 
@@ -54,9 +71,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input autoComplete="username" placeholder="Type your name" type="text" {...field} />
                     </FormControl>
-                    <FormDescription>This is your public display name.</FormDescription>
+                    <FormDescription className="sr-only">This is your public display name.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -83,7 +100,20 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Password {...field}></Password>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>confirm Password</FormLabel>
+                    <FormControl>
+                     <Password {...field}></Password>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
